@@ -1,0 +1,32 @@
+<button (click)="goBack()" class="goBackBtn" aria-label="Return to home">Retour</button>
+
+<div *ngIf="messageVisible" class="message">
+  <h2>{{ message }}</h2>
+</div> 
+
+<div *ngIf="!messageVisible">
+  <div class="info-container">
+    <h1>{{ countryName }}</h1>
+    <div>
+      <div class="info-box">
+        <p>Number of entries<br><b>{{ numberOfEntries }}</b></p>
+      </div>
+      <div class="info-box">
+        <p>Total number medals<br><b>{{ numberOfMedals }}</b></p>
+      </div>
+      <div class="info-box">
+        <p>Total number of athletes<br><b>{{ numberOfAthletes }}</b></p>
+      </div>
+  </div>
+  <div class="chart-container">
+    <ngx-charts-line-chart
+      [results]="numberOfMedalsPerYear"
+      [xAxis]="true"
+      [yAxis]="true"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      xAxisLabel="Dates"
+      class="graph"
+    ></ngx-charts-line-chart>
+  </div>
+</div>

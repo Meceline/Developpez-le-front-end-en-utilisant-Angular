@@ -1,31 +1,41 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { Olympics } from '../models/Olympic';
+import { CustomErrorHandler } from '../../shared/error-handler.service'; 
 
 @Injectable({
   providedIn: 'root',
 })
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
-  private olympics$ = new BehaviorSubject<any>(undefined);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private errorHandler: CustomErrorHandler) {}
 
-  loadInitialData() {
-    return this.http.get<any>(this.olympicUrl).pipe(
-      tap((value) => this.olympics$.next(value)),
-      catchError((error, caught) => {
-        // TODO: improve error handling
-        console.error(error);
-        // can be useful to end loading state and let the user know something went wrong
-        this.olympics$.next(null);
-        return caught;
-      })
+  getOlympics() {
+    return this.http.get<Olympics[]>(this.olympicUrl).pipe(
+      tap(data=>console.log(data)),
+      catchError(this.errorHandler.handleError) 
     );
   }
 
-  getOlympics() {
-    return this.olympics$.asObservable();
+  getCountryById(countryId: number): Observable<Olympics | null> {
+    return this.http.get<Olympics[]>(this.olympicUrl).pipe(
+      map(countries => countries.find(country => country.id === countryId) || null),
+      catchError(this.errorHandler.handleError) 
+    );
   }
+
+  isIdExist(countryId: number): Observable<Olympics | null> {
+    return this.http.get<Olympics[]>(this.olympicUrl).pipe(
+      map(countries => {
+        const country = countries.find(country => country.id === +countryId);
+        return Boolean(country); // Convertit le pays en valeur booléenne
+      }),
+      catchError(this.errorHandler.handleError) 
+    )
+    
+  }
+
 }

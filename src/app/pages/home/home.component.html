@@ -1,3 +1,44 @@
 <h2>Olympic games app</h2>
 <hr />
-<p>{{ (olympics$ | async)?.length }} data loaded</p>
+
+<div *ngIf="messageVisible" class="message">
+  <h2>{{ message }}</h2>
+</div> 
+
+<div *ngIf="!messageVisible">
+  <div class="info-container">
+    <h1>Medals per Country</h1>
+    <div>
+      <div class="info-box">
+        <p>Number of JOs<br><b>{{ numberOfCities }}</b></p>
+      </div>
+      <div class="info-box">
+        <p>Number of countries<br><b>{{ numberOfCountries }}</b></p>
+      </div>
+  </div>
+    
+  </div>
+    <div class="chart-container">
+      <ngx-charts-pie-chart
+        [results]="chartData"
+        [legend]="false"
+        [explodeSlices]="false"
+        [labels]="true"
+        (select)="detailOfCountry($event)"
+      >
+    
+      <ng-template #tooltipTemplate let-model="model">
+        <div class="custom-tooltip">
+          <div class="tooltip-label">{{ model.name }}</div>
+          <div class="tooltip-value">
+            <img src="{{ iconData }}" alt="Icon" class="tooltip-icon"> {{ model.value }}
+          </div>
+        </div>
+      </ng-template>
+
+    </ngx-charts-pie-chart>
+
+
+
+    </div>
+  </div>
